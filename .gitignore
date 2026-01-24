@@ -33,3 +33,12 @@ __pycache__/
 *.pyc
 venv/
 .env
+
+# CMake
+build/
+cmake-build-*/
+CMakeFiles/
+CMakeCache.txt
+cmake_install.cmake
+_deps/
+compile_commands.json
