@@ -111,10 +111,18 @@ else
 fi
 
 echo "Ensuring core '$CORE' is installed..."
-if arduino-cli core list | grep -q "$CORE"; then
-    echo "Core '$CORE' is already installed. Skipping installation."
+# Force version 2.0.17 for compatibility
+TARGET_VERSION="2.0.17"
+INSTALLED_VERSION=$(arduino-cli core list | grep "$CORE" | awk '{print $2}')
+
+# Check if the installed version is EXACTLY the target version
+if [ "$INSTALLED_VERSION" == "$TARGET_VERSION" ]; then
+    echo "Core '$CORE' version $TARGET_VERSION is already installed."
 else
-    arduino-cli core install "$CORE"
+    echo "Installing Core '$CORE' version $TARGET_VERSION..."
+    # Uninstall current if it exists and is not target? 
+    # arduino-cli core install replaces it usually.
+    arduino-cli core install "$CORE@$TARGET_VERSION"
 fi
 
 # 3. Check Prerequisites (CMake)
@@ -135,45 +143,44 @@ if [ ! -d "$BUILD_DIR" ]; then
     mkdir "$BUILD_DIR"
 fi
 
-# 5. Configure with CMake
+# 5. Build with Arduino CLI (Direct Mode)
 echo "========================================================"
-echo "Configuring for Board: $BOARD"
+echo "Compiling with Arduino CLI for Board: $BOARD"
 echo "========================================================"
 
-cd "$BUILD_DIR" || exit
+# Compile Sketch
+# Assuming the sketch is at src/function/OnStepX/OnStepX.ino
+SKETCH_PATH="$(pwd)/src/function/OnStepX/OnStepX.ino"
+BUILD_PATH="$(pwd)/$BUILD_DIR"
 
-cmake .. \
-    -DARDUINO_BOARD="$BOARD" \
-    -DCMAKE_EXPORT_COMPILE_COMMANDS=ON \
-    -DFETCHCONTENT_SOURCE_DIR_ARDUINO-CMAKE-TOOLCHAIN="$TOOLS_DIR/arduino-cmake-toolchain" \
-    -DARDUINO_PACKAGE_PATH="$ARDUINO_DIRECTORIES_DATA"
-
-if [ $? -ne 0 ]; then
-    echo "Error: CMake configuration failed."
+if [ ! -f "$SKETCH_PATH" ]; then
+    echo "Error: Sketch not found at $SKETCH_PATH"
     exit 1
 fi
 
-# 6. Build
-echo "========================================================"
-echo "Starting Build..."
-echo "========================================================"
+echo "Sketch: $SKETCH_PATH"
+echo "Output: $BUILD_PATH"
 
-# Determine number of cores for parallel build
-if command -v nproc &> /dev/null; then
-    JOBS=$(nproc)
-else
-    JOBS=2 # Default to 2 if nproc not available
-fi
+# Ensure build directory exists
+mkdir -p "$BUILD_PATH"
 
-echo "Building with $JOBS parallel jobs..."
-cmake --build . --parallel "$JOBS"
+arduino-cli compile \
+    --fqbn "$BOARD" \
+    --build-path "$BUILD_PATH" \
+    --build-property "compiler.cpp.extra_flags=-DSERIAL_B=Serial1" \
+    --jobs 0 \
+    --verbose \
+    "$SKETCH_PATH"
 
 if [ $? -eq 0 ]; then
     echo "========================================================"
     echo "Build Successful!"
-    echo "Artifacts are located in: $(pwd)"
+    echo "Artifacts are located in: $BUILD_PATH"
     echo "========================================================"
 else
     echo "Error: Build failed."
     exit 1
 fi
+
+# Note: We are bypassing CMake for the actual build process to use the native CLI speed and stability.
+# However, if you need compile_commands.json for IDE intellisense, you might still want a minimal CMake setup later.
