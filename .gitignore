@@ -1,0 +1,45 @@
+# PlatformIO / Arduino
+.pio/
+.pioenvs/
+.piolibdeps/
+*.elf
+*.bin
+*.hex
+*.map
+
+# VS Code
+.vscode/
+.history/
+*.code-workspace
+
+# macOS
+.DS_Store
+
+# User-specific
+cache/
+*.local
+Config.user.h
+
+# Temporary files
+tmp/
+temp/
+
+# Documentation generation
+doxygen/
+docs/_build/
+
+# Python (if used for scripts)
+__pycache__/
+*.pyc
+venv/
+.env
+
+# CMake
+build/
+cmake-build-*/
+CMakeFiles/
+CMakeCache.txt
+cmake_install.cmake
+_deps/
+compile_commands.json
+tools/
