@@ -44,3 +44,33 @@ _deps/
 compile_commands.json
 tools/
 tools_linux/
+.trae/documents
+
+# C++ build artifacts
+*.o
+*.obj
+*.a
+*.lib
+*.so
+*.dll
+*.dylib
+*.exe
+*.out
+*.app
+
+# Python
+*.py[cod]
+*.pyo
+*.pyd
+*.whl
+pip-log.txt
+pip-delete-this-directory.txt
+.pytest_cache/
+htmlcov/
+.coverage
+.coverage.*
+*.cover
+.hypothesis/
+*.egg-info/
+.installed.cfg
+*.egg

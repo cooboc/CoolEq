@@ -1,0 +1,23 @@
+[project]
+name = "polaralignment"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+requires-python = ">=3.13"
+dependencies = [
+    "astropy>=7.2.0",
+    "numpy>=2.4.2",
+    "opencv-python>=4.13.0.92",
+    "pyserial>=3.5",
+    "requests>=2.32.5",
+]
+
+[dependency-groups]
+dev = [
+    "pytest>=9.0.2",
+    "pytest-cov>=7.0.0",
+]
+
+[[tool.uv.index]]
+url = "https://pypi.org/simple"
+default = true
