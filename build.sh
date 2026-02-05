@@ -18,7 +18,7 @@ mkdir -p "$TOOLS_DIR/bin"
 export PATH="$TOOLS_DIR/bin:$PATH"
 
 # Try to find bundled arduino-cli from user's IDE
-IDE_CLI_PATH="/home/zhao/workspace/arduino-ide_2.3.6_Linux_64bit/resources/app/lib/backend/resources/arduino-cli"
+IDE_CLI_PATH="${IDE_CLI_PATH:-/home/zhao/workspace/arduino-ide_2.3.6_Linux_64bit/resources/app/lib/backend/resources/arduino-cli}"
 if [ -f "$IDE_CLI_PATH" ]; then
     echo "Found bundled arduino-cli at $IDE_CLI_PATH"
     if [ -f "$TOOLS_DIR/bin/arduino-cli" ]; then
